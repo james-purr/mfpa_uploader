@@ -31,37 +31,60 @@ $(document).ready(function(){
   })
   $('.datepicker').datepicker();
   $('#submit-form').on('click', searchForBookings);
+
+  if($('.booking-show-wrapper').length){
+    var bookingId = $('.booking-show-wrapper').attr('id');
+    getImageData(bookingId)
+  }
 });
 
 
 function getImageData(id){
+  console.log('hit image data')
   $.ajax({
     type: "GET",
     url: "/get-missing-images/"+id+".json",
     dataType: 'json',
     success: function(data) {
-      data.forEach(function(image) {
+      images = data["singled_pics"]
+      inspection = data["singled_pics"]["inspection"];
+      checkin = data["singled_pics"]["checkin"];
+      rtl = data["singled_pics"]["rtl"];
+      loaded = data["singled_pics"]["loaded"];
+      booking = data["booking"];
+      images.forEach(function(image) {
         $('.missing_images_wrapper').removeClass('hide');
         $('.search-results').addClass('hide');
         if(image != null){
           console.log(image)
-          $('.missing-images').append("<div class='col s4 image-card' data-large='"+image.image.large.url+"'data-thumb='"+image.image.thumb.url+"' data-url='"+image.image.url+"' id='"+image.id+"' > <form action='/file-upload' class='dropzone'><div class='card blue-grey'><div class='card-content white-text'><h5>"+image.name+"</h5></div></div></form></div>");
-          // $('.missing-images form.dropzone').last().dropzone({ url: "/upload_to_server.json" });
-          imagedata = image
-          $('.missing-images form.dropzone').last().dropzone({
-            url: "/upload_to_server.json",
-            init: function(image) {
-              this.on("sending", function(file, xhr, formData) {
-                formData.append('large', imagedata.image.large.url);
-                formData.append('thumb', imagedata.image.thumb.url);
-                formData.append('original', imagedata.image.url);
-                // formData.append("data", "loremipsum");
-                console.log(formData)
+          [inspection,  checkin, rtl, loaded].forEach(function(collection) {
+            collection.forEach(function(image) {
+              $('.missing-images').append("<div class='col s4 image-card' data-large='"+image.image.large.url+"'data-thumb='"+image.image.thumb.url+"' data-url='"+image.image.url+"' id='"+image.id+"' > <form action='/file-upload' class='dropzone'><div class='card blue-grey'><div class='card-content white-text'><h5>"+image.name+"</h5></div></div></form></div>");
+              // $('.missing-images form.dropzone').last().dropzone({ url: "/upload_to_server.json" });
+              $('.missing-images form.dropzone').last().dropzone({
+                url: "/upload_to_server.json",
+                init: function(e) {
+                  this.on("sending", function(file, xhr, formData) {
+                    var element = $(this.element.parentElement).data();
+                    formData.append('large', element.large);
+                    formData.append('thumb', element.thumb);
+                    formData.append('original', element.url);
+                    // formData.append("data", "loremipsum");
+                    console.log(formData)
+                  });
+                }
               });
-            }
-          });
+            })
+          })
         }
       });
+      $('span.created_at').text(booking["quotation"]["created_at"])
+      $('span.departure_date').text(booking["quotation"]["departure_date"])
+      $('span.model').text(booking["quotation"]["model"])
+      $('span.make').text(booking["quotation"]["make"])
+      $('span.registration').text(booking["registration"])
+      $('span.dropoff').text(booking["dropoff"])
+      $('span.colour').text(booking["colour"])
     },
   });
 }

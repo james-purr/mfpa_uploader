@@ -1,0 +1,26 @@
+.booking-show-wrapper{ :id => @booking.booking_id }
+  .booking-info
+
+    %p
+      Quotation created at:
+      %span.created_at
+    %p
+      Departure date:
+      %span.departure_date
+    %p
+      Vehicle Model:
+      %span.model
+    %p
+      Vehicle Make:
+      %span.make
+    %p
+      Vehicle registration:
+      %span.registration
+    %p
+      Dropoff date:
+      %span.dropoff
+    %p
+      Colour:
+      %span.colour
+  .missing_images_wrapper.hide
+    = render 'uploads/missing_images'

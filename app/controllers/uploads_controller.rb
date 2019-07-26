@@ -4,7 +4,11 @@ class UploadsController < ApplicationController
   # GET /uploads
   # GET /uploads.json
   def index
-    @uploads = Upload.all
+    @booking = Booking.where(complete:false).first
+  end
+
+  def search_bookings
+
   end
 
   # GET /uploads/1
@@ -47,13 +51,25 @@ class UploadsController < ApplicationController
     http.use_ssl = true
     response = http.get(uri.request_uri)
     parsed = JSON.parse(response.body)
-    names = parsed.map{|picture| picture["name"]}.uniq
+    names = parsed["missing_images"].map{|picture| picture["name"]}.uniq
     singled_pics = []
     names.each do |name|
-      singled_pics.push(parsed.select{|image| image["name"] == name}.last)
+      singled_pics.push(parsed["missing_images"].select{|image| image["name"] == name}.last)
     end
+
+    return_object = {}
+    checkin = singled_pics.select{|pic| pic["name"].include?("checkin")}
+    rtl = singled_pics.select{|pic| pic["name"].include?("rtl")}
+    loaded = singled_pics.select{|pic| pic["name"].include?("loaded")}
+    inspection = singled_pics - loaded - checkin - rtl
+    return_object['singled_pics'] = {}
+    return_object['singled_pics']["inspection"] = inspection
+    return_object['singled_pics']["checkin"] = checkin
+    return_object['singled_pics']["rtl"] = rtl
+    return_object['singled_pics']["loaded"] = loaded
+    return_object['booking'] = parsed["booking"]
     respond_to do |format|
-      format.json { render json: singled_pics , status: :ok}
+      format.json { render json: return_object , status: :ok}
     end
   end
 
@@ -81,10 +97,11 @@ class UploadsController < ApplicationController
     folder_path = Rails.root.to_s + "/public" + (uploader.url.split('/') - [uploader.url.split('/').last]).join('/')
     File.rename( Rails.root.to_s + "/public" + uploader.url, folder_path + "/" + match_file_path)
     upload_file_path = folder_path + "/" + match_file_path
-    existing_file_path = params["large"]
-    existing_file_path = (existing_file_path.split('/') - [existing_file_path.split('/').last]).join('/')
-    Net::SCP.start("sfuk01.default.uglogvirtual.uk0.bigv.io", "admin", :password => "6XPfdi9Son") do |scp|
-
+    existing_file_path = "/srv/apps/production/public" + params["large"]
+    # existing_file_path = (existing_file_path.split('/') - [existing_file_path.split('/').last]).join('/')
+    response = false
+    Net::SFTP.start('sfuk01.default.uglogvirtual.uk0.bigv.io', 'admin', :password => '6XPfdi9Son') do |sftp|
+      sftp.upload!(upload_file_path, existing_file_path)
     end
   end
 

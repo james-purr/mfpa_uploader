@@ -24,7 +24,6 @@ default: &default
 development:
   <<: *default
   database: sfuk_image_uploader_development
-  port: 5433
   host: localhost
 
   # The specified database role being used to connect to postgres.
@@ -60,7 +59,6 @@ development:
 test:
   <<: *default
   database: sfuk_image_uploader_test
-  port: 5433
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
