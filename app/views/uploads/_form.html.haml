@@ -1,0 +1,17 @@
+= form_with(model: upload, local: true) do |form|
+  - if upload.errors.any?
+    #error_explanation
+      %h2
+        = pluralize(upload.errors.count, "error")
+        prohibited this upload from being saved:
+      %ul
+        - upload.errors.full_messages.each do |message|
+          %li= message
+  .field
+    = form.label :booking_id
+    = form.number_field :booking_id, id: :upload_booking_id
+  .field
+    = form.label :original_file_name
+    = form.text_field :original_file_name, id: :upload_original_file_name
+  .actions
+    = form.submit

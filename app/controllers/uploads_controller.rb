@@ -1,6 +1,6 @@
 class UploadsController < ApplicationController
   before_action :set_upload, only: [:show, :edit, :update, :destroy]
-
+  skip_before_action :verify_authenticity_token, except: [:search, :get_missing_images]
   # GET /uploads
   # GET /uploads.json
   def index
@@ -21,6 +21,42 @@ class UploadsController < ApplicationController
   def edit
   end
 
+  def search
+    require 'net/http'
+    uri = URI('https://secure.shipfromuk.com/api_search')
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    new_params = params.except(:controller, :action, :utf8, :authenticity_token, :commit)
+    new_params = new_params.reject{|_, v| v.blank?}
+    params_to_pass = {}
+    new_params.each{|p| params_to_pass[p] = new_params[p]}
+    request = Net::HTTP::Post.new(uri.path, {'Content-Type' => 'application/json'})
+    request.body = params_to_pass.to_json
+    response = http.request(request)
+    respond_to do |format|
+      format.json { render json: JSON.parse(response.body) , status: :ok}
+    end
+    # @bookings =
+  end
+
+  def get_missing_images
+    require 'net/http'
+    id = params[:id]
+    uri = URI.parse("https://secure.shipfromuk.com/missing_images/#{id}")
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    response = http.get(uri.request_uri)
+    parsed = JSON.parse(response.body)
+    names = parsed.map{|picture| picture["name"]}.uniq
+    singled_pics = []
+    names.each do |name|
+      singled_pics.push(parsed.select{|image| image["name"] == name}.last)
+    end
+    respond_to do |format|
+      format.json { render json: singled_pics , status: :ok}
+    end
+  end
+
   # POST /uploads
   # POST /uploads.json
   def create
@@ -34,6 +70,21 @@ class UploadsController < ApplicationController
         format.html { render :new }
         format.json { render json: @upload.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  def upload_to_server
+    file = params[:file]
+    uploader = ImageUploader.new
+    uploader.store!(file)
+    match_file_path = params["large"].split('/').last
+    folder_path = Rails.root.to_s + "/public" + (uploader.url.split('/') - [uploader.url.split('/').last]).join('/')
+    File.rename( Rails.root.to_s + "/public" + uploader.url, folder_path + "/" + match_file_path)
+    upload_file_path = folder_path + "/" + match_file_path
+    existing_file_path = params["large"]
+    existing_file_path = (existing_file_path.split('/') - [existing_file_path.split('/').last]).join('/')
+    Net::SCP.start("sfuk01.default.uglogvirtual.uk0.bigv.io", "admin", :password => "6XPfdi9Son") do |scp|
+
     end
   end
 

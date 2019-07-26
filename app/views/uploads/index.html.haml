@@ -1,0 +1,24 @@
+%p#notice= notice
+.search-form
+  %h5 Search for booking
+  .row
+    = form_tag booking_search_path, :class => 'col s8' do
+      .row
+        =text_field_tag :container, nil, class: 'input-field col s3', placeholder: 'Container number'
+        =text_field_tag :make, nil, class: 'input-field col s3', placeholder: 'Vehicle make'
+        =text_field_tag :model, nil, class: 'input-field col s3', placeholder: 'Vehicle model'
+      .row
+        .input-field.col.s4
+          %p Vehicle Type
+          =select_tag "vehicle type",  options_for_select([['', ""], ['Car', 1], ['Van', 2], ['Caravan', 3]])
+        .input-field.col.s4
+          %p DropOff Date from
+          %input{:name=>'dropoff_date_min',:type=>"text", :class=>"datepicker"}
+        .input-field.col.s4
+          %p DropOff Date to
+          %input{:name=>'dropoff_date_max',:type=>"text", :class=>"datepicker"}
+        = submit_tag 'Search', class: "waves-effect waves-light btn", id: 'submit-form'
+.search-results.hide
+  = render 'search_results'
+.missing_images_wrapper.hide
+  = render 'missing_images'

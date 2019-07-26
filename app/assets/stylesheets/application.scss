@@ -1,0 +1,48 @@
+@import "materialize";
+@import "dropzone/basic";
+
+select{
+  display: inherit!important;
+}
+
+.dz-default.dz-message{
+  color: white!important;
+  position: absolute!important;
+  bottom: 11px!important;
+  left: 24px!important;
+}
+.dropzone .dz-preview{
+  position:absolute!important;
+  z-index: 1!important;
+  top: 0!important;
+  right: -7px!important;
+}
+
+.dz-image img{
+  width: 50px!important;
+}
+.dropzone .dz-preview .dz-error-mark, .dropzone .dz-preview .dz-success-mark{
+  left: 69% !important;
+  top: -16px!important;
+}
+.dropzone .dz-preview .dz-error-mark svg, .dropzone .dz-preview .dz-success-mark svg{
+  width: 20px!important;
+}
+
+.dz-error-message{
+  display:none!important;
+}
+
+.dz-error-mark svg path{
+  fill:red!important;
+}
+
+.dropzone .dz-preview{
+  right: -16% !important;
+}
+.dz-details{
+  font-size: 10px!important;
+  width: 50%!important;
+}
+
+.dropzone .dz-preview .dz-error-mark, .dropzone .dz-preview .dz-success-mark{}
