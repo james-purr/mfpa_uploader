@@ -52,13 +52,13 @@ function getImageData(id){
       rtl = data["singled_pics"]["rtl"];
       loaded = data["singled_pics"]["loaded"];
       booking = data["booking"];
-      images.forEach(function(image) {
-        $('.missing_images_wrapper').removeClass('hide');
-        $('.search-results').addClass('hide');
-        if(image != null){
-          console.log(image)
-          [inspection,  checkin, rtl, loaded].forEach(function(collection) {
-            collection.forEach(function(image) {
+      var imageTypes = [['inspection', 'Inspection Images'], ['checkin', 'Checkin Images'], ['rtl', 'Ready to load images'] ]
+      $('.missing_images_wrapper').removeClass('hide');
+      $('.search-results').addClass('hide');
+      imageTypes.forEach(function(type) {
+        $('.missing-images').append("<h4>"+type[1]+"</h4>")
+        images[type[0]].forEach(function(image) {
+          if(image != null){
               $('.missing-images').append("<div class='col s4 image-card' data-large='"+image.image.large.url+"'data-thumb='"+image.image.thumb.url+"' data-url='"+image.image.url+"' id='"+image.id+"' > <form action='/file-upload' class='dropzone'><div class='card blue-grey'><div class='card-content white-text'><h5>"+image.name+"</h5></div></div></form></div>");
               // $('.missing-images form.dropzone').last().dropzone({ url: "/upload_to_server.json" });
               $('.missing-images form.dropzone').last().dropzone({
@@ -74,10 +74,11 @@ function getImageData(id){
                   });
                 }
               });
-            })
-          })
-        }
+          }
+        });
       });
+
+
       $('span.created_at').text(booking["quotation"]["created_at"])
       $('span.departure_date').text(booking["quotation"]["departure_date"])
       $('span.model').text(booking["quotation"]["model"])
