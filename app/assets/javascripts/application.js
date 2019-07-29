@@ -61,21 +61,26 @@ function getImageData(id){
         $('.missing-images').append("<div class='row col s12'><h4>"+type[1]+"</h4></div>")
         images[type[0]].forEach(function(image) {
           if(image != null){
-              $('.missing-images').append("<div class='col s4 image-card' data-large='"+image.image.large.url+"'data-thumb='"+image.image.thumb.url+"' data-url='"+image.image.url+"' id='"+image.id+"' > <form action='/file-upload' class='dropzone'><div class='card blue-grey'><div class='card-content white-text'><h5>"+image.name+"</h5></div></div></form></div>");
-              // $('.missing-images form.dropzone').last().dropzone({ url: "/upload_to_server.json" });
-              $('.missing-images form.dropzone').last().dropzone({
-                url: "/upload_to_server.json",
-                init: function(e) {
-                  this.on("sending", function(file, xhr, formData) {
-                    var element = $(this.element.parentElement).data();
-                    formData.append('large', element.large);
-                    formData.append('thumb', element.thumb);
-                    formData.append('original', element.url);
-                    // formData.append("data", "loremipsum");
-                    console.log(formData)
-                  });
-                }
-              });
+              if(image["exists"] == false){
+                $('.missing-images').append("<div class='col s4 image-card' data-large='"+image["picture"].image.large.url+"'data-thumb='"+image["picture"].image.thumb.url+"' data-url='"+image["picture"].image.url+"' id='"+image["picture"].id+"' > <form action='/file-upload' class='dropzone'><div class='card blue-grey'><div class='card-content white-text'><h5>"+image["picture"].name+"</h5><p>"+image["picture"].created_at+"</p></div></div></form></div>");
+                // $('.missing-images form.dropzone').last().dropzone({ url: "/upload_to_server.json" });
+                $('.missing-images form.dropzone').last().dropzone({
+                  url: "/upload_to_server.json",
+                  init: function(e) {
+                    this.on("sending", function(file, xhr, formData) {
+                      var element = $(this.element.parentElement).data();
+                      formData.append('large', element.large);
+                      formData.append('thumb', element.thumb);
+                      formData.append('original', element.url);
+                      // formData.append("data", "loremipsum");
+                      console.log(formData)
+                    });
+                  }
+                });
+              }else{
+                $('.missing-images').append("<div class='col s4 image-card' data-large='"+image["picture"].image.large.url+"'data-thumb='"+image["picture"].image.thumb.url+"' data-url='"+image["picture"].image.url+"' id='"+image["picture"].id+"' ><img src='https://secure.shipfromuk.com"+image["picture"].image.url+"'/> </div>");
+              }
+
           }
         });
       });

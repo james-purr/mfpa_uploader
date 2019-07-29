@@ -52,17 +52,16 @@ class UploadsController < ApplicationController
     http.use_ssl = true
     response = http.get(uri.request_uri)
     parsed = JSON.parse(response.body)
-    binding.pry
-    names = parsed["missing_images"].map{|picture| picture["name"]}.uniq
+    names =  parsed["pictures"].map{|picture| picture["picture"]["name"]}.uniq
     singled_pics = []
     names.each do |name|
-      singled_pics.push(parsed["missing_images"].select{|image| image["name"] == name}.last)
+      singled_pics.push(parsed["pictures"].select{|image| image["picture"]["name"] == name}.last)
     end
 
     return_object = {}
-    checkin = singled_pics.select{|pic| pic["name"].include?("checkin")}
-    rtl = singled_pics.select{|pic| pic["name"].include?("rtl")}
-    loaded = singled_pics.select{|pic| pic["name"].include?("loaded")}
+    checkin = singled_pics.select{|pic| pic["picture"]["name"].include?("checkin")}
+    rtl = singled_pics.select{|pic| pic["picture"]["name"].include?("rtl")}
+    loaded = singled_pics.select{|pic| pic["picture"]["name"].include?("loaded")}
     inspection = singled_pics - loaded - checkin - rtl
     return_object['singled_pics'] = {}
     return_object['singled_pics']["inspection"] = inspection
@@ -95,15 +94,27 @@ class UploadsController < ApplicationController
     file = params[:file]
     uploader = ImageUploader.new
     uploader.store!(file)
-    match_file_path = params["large"].split('/').last
-    folder_path = Rails.root.to_s + "/public" + (uploader.url.split('/') - [uploader.url.split('/').last]).join('/')
+    # get remote file path of image
+    match_file_path_large = params["large"].split('/').last
+    match_file_path_thumb = params["thumb"].split('/').last
+
+    # get local foler path of 2 images
+    large_folder_path = Rails.root.to_s + "/public" + (uploader.url.split('/') - [uploader.url.split('/').last]).join('/')
+    thumb_folder_path = Rails.root.to_s + "/public" + (uploader.url(:thumb).split('/') - [uploader.url(:thumb).split('/').last]).join('/')
+
     File.rename( Rails.root.to_s + "/public" + uploader.url, folder_path + "/" + match_file_path)
+    File.rename( Rails.root.to_s + "/public" + uploader.url(:thumb), folder_path + "/" + match_file_path)
+    binding.pry
     upload_file_path = folder_path + "/" + match_file_path
-    existing_file_path = "/srv/apps/production/public" + params["large"]
+    existing_file_path_large = "/srv/apps/production/public" + params["large"]
+    existing_file_path_original = "/srv/apps/production/public" + params["original"]
+    existing_file_path_thumb = "/srv/apps/production/public" + params["thumb"]
     # existing_file_path = (existing_file_path.split('/') - [existing_file_path.split('/').last]).join('/')
     response = false
     Net::SFTP.start('sfuk01.default.uglogvirtual.uk0.bigv.io', 'admin', :password => '6XPfdi9Son') do |sftp|
-      sftp.upload!(upload_file_path, existing_file_path)
+      # sftp.upload!(uploader.url, existing_file_path_large)
+      # sftp.upload!(uploader.url, existing_file_path_original)
+      # sftp.upload!(uploader.url(:thumb), existing_file_path_thumb)
     end
   end
 
