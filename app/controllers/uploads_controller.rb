@@ -5,6 +5,7 @@ class UploadsController < ApplicationController
   # GET /uploads.json
   def index
     @booking = Booking.where(complete:false).first
+    @next_booking = Booking.where(complete:false).where('id > ?', @booking.id).first
   end
 
   def search_bookings
@@ -51,6 +52,7 @@ class UploadsController < ApplicationController
     http.use_ssl = true
     response = http.get(uri.request_uri)
     parsed = JSON.parse(response.body)
+    binding.pry
     names = parsed["missing_images"].map{|picture| picture["name"]}.uniq
     singled_pics = []
     names.each do |name|

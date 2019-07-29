@@ -1,26 +1,49 @@
-.booking-show-wrapper{ :id => @booking.booking_id }
-  .booking-info
+.preloader-container
+  .preloader-wrapper.big.active
+    .spinner-layer.spinner-blue-only
+      .circle-clipper.left
+        .circle
+      .gap-patch
+        .circle
+      .circle-clipper.right
+        .circle
+  %p Loading Images
 
-    %p
-      Quotation created at:
-      %span.created_at
-    %p
-      Departure date:
-      %span.departure_date
-    %p
-      Vehicle Model:
-      %span.model
-    %p
-      Vehicle Make:
-      %span.make
-    %p
-      Vehicle registration:
-      %span.registration
-    %p
-      Dropoff date:
-      %span.dropoff
-    %p
-      Colour:
-      %span.colour
+.booking-show-wrapper{ :id => @booking ? @booking.booking_id : @reference}
+  .row
+    .col.s6
+      - if @next_booking
+        %p Go to next booking that requires photos
+        = link_to "Next Booking", booking_path(@next_booking), class: " btn"
+  .row.booking-info.hide
+    .booking-info.col.s12
+      .col.s6
+        %p
+          %b Quotation created at:
+          %span.created_at
+      .col.s6
+        %p
+          %b Departure date:
+          %span.departure_date
+      .col.s6
+        %p
+          %b Vehicle Model:
+          %span.model
+      .col.s6
+        %p
+          %b Vehicle Make:
+          %span.make
+      .col.s6
+        %p
+          %b Vehicle registration:
+          %span.registration
+      .col.s6
+        %p
+          %b Dropoff date:
+          %span.dropoff
+      .col.s6
+        %p
+          %b Colour:
+          %span.colour
   .missing_images_wrapper.hide
     = render 'uploads/missing_images'

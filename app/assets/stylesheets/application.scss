@@ -5,6 +5,28 @@ select{
   display: inherit!important;
 }
 
+nav .nav-wrapper{
+      background: white;
+}
+
+nav .brand-logo, nav ul a{
+  color:black;
+}
+nav .brand-logo{
+  padding-left: 40px;
+}
+
+
+.preloader-container{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+.preloader-wrapper{
+  height: 100px!important;
+  width: 100px!important;
+}
+
 .dz-default.dz-message{
   color: white!important;
   position: absolute!important;

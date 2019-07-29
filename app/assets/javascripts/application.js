@@ -18,7 +18,7 @@
 //= require materialize
 //= require_tree .
 
-$(document).ready(function(){
+$( document ).on('turbolinks:load',function(){
   $('body').on('click', '.booking-card', function(e){
     $('.search-results').addClass('hide');
     $('.missing_images_wrapper').removeClass('hide');
@@ -27,7 +27,7 @@ $(document).ready(function(){
     }else{
       var id = $(e.target).parents('.booking-card').attr('id')
     }
-    getImageData(id);
+    window.location.href = "booking-by-reference/" + id;
   })
   $('.datepicker').datepicker();
   $('#submit-form').on('click', searchForBookings);
@@ -55,8 +55,10 @@ function getImageData(id){
       var imageTypes = [['inspection', 'Inspection Images'], ['checkin', 'Checkin Images'], ['rtl', 'Ready to load images'] ]
       $('.missing_images_wrapper').removeClass('hide');
       $('.search-results').addClass('hide');
+      $('.booking-info').removeClass('hide');
+      $('.preloader-container').addClass('hide');
       imageTypes.forEach(function(type) {
-        $('.missing-images').append("<h4>"+type[1]+"</h4>")
+        $('.missing-images').append("<div class='row col s12'><h4>"+type[1]+"</h4></div>")
         images[type[0]].forEach(function(image) {
           if(image != null){
               $('.missing-images').append("<div class='col s4 image-card' data-large='"+image.image.large.url+"'data-thumb='"+image.image.thumb.url+"' data-url='"+image.image.url+"' id='"+image.id+"' > <form action='/file-upload' class='dropzone'><div class='card blue-grey'><div class='card-content white-text'><h5>"+image.name+"</h5></div></div></form></div>");
@@ -87,10 +89,14 @@ function getImageData(id){
       $('span.dropoff').text(booking["dropoff"])
       $('span.colour').text(booking["colour"])
     },
+    error: function(data){
+      debugger
+    }
   });
 }
 function searchForBookings(e){
     e.preventDefault();
+    $('.preloader-container').removeClass('hide');
     var params = {}
     params["container"] = $('input[name="container"]').val();
     params["make"] = $('input[name="make"]').val();
@@ -109,8 +115,9 @@ function searchForBookings(e){
       success: function(data) {
         data.forEach(function(booking) {
           $('.search-results').removeClass('hide');
+          $('.preloader-container').addClass('hide');
           if(booking != null){
-            $('.booking-results').append("<div class='col s4 booking-card' id='"+booking.id+"'><div class='card blue-grey'><div class='card-content white-text'><p>Dropoff:"+booking.dropoff+"</p><p>Model:"+booking.quotation.model+"</p><p>Make:"+booking.quotation.make+"</p></div></div></div>")
+            $('.booking-results').append("<a><div class='col s4 booking-card' id='"+booking.id+"'><div class='card blue-grey'><div class='card-content white-text'><p>Dropoff:"+booking.dropoff+"</p><p>Model:"+booking.quotation.model+"</p><p>Make:"+booking.quotation.make+"</p></div></div></div></a>")
           }
         });
       },
