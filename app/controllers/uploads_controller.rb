@@ -6,6 +6,7 @@ class UploadsController < ApplicationController
   def index
     @booking = Booking.where(complete:false).first
     @next_booking = Booking.where(complete:false).where('id > ?', @booking.id).first
+    @last_booking = Booking.where(complete:false).last
   end
 
   def search_bookings
@@ -102,19 +103,20 @@ class UploadsController < ApplicationController
     large_folder_path = Rails.root.to_s + "/public" + (uploader.url.split('/') - [uploader.url.split('/').last]).join('/')
     thumb_folder_path = Rails.root.to_s + "/public" + (uploader.url(:thumb).split('/') - [uploader.url(:thumb).split('/').last]).join('/')
 
-    File.rename( Rails.root.to_s + "/public" + uploader.url, folder_path + "/" + match_file_path)
-    File.rename( Rails.root.to_s + "/public" + uploader.url(:thumb), folder_path + "/" + match_file_path)
-    binding.pry
-    upload_file_path = folder_path + "/" + match_file_path
+    File.rename( Rails.root.to_s + "/public" + uploader.url, large_folder_path + "/" + match_file_path_large)
+    File.rename( Rails.root.to_s + "/public" + uploader.url(:thumb), thumb_folder_path + "/" + match_file_path_thumb)
+
+    large_upload_file_path = large_folder_path + "/" + match_file_path_large
+    thumb_upload_file_path = thumb_folder_path + "/" + match_file_path_thumb
     existing_file_path_large = "/srv/apps/production/public" + params["large"]
     existing_file_path_original = "/srv/apps/production/public" + params["original"]
     existing_file_path_thumb = "/srv/apps/production/public" + params["thumb"]
     # existing_file_path = (existing_file_path.split('/') - [existing_file_path.split('/').last]).join('/')
     response = false
     Net::SFTP.start('sfuk01.default.uglogvirtual.uk0.bigv.io', 'admin', :password => '6XPfdi9Son') do |sftp|
-      # sftp.upload!(uploader.url, existing_file_path_large)
-      # sftp.upload!(uploader.url, existing_file_path_original)
-      # sftp.upload!(uploader.url(:thumb), existing_file_path_thumb)
+      sftp.upload!(thumb_upload_file_path, existing_file_path_thumb)
+      sftp.upload!(large_upload_file_path, existing_file_path_original)
+      sftp.upload!(large_upload_file_path, existing_file_path_large)
     end
   end
 

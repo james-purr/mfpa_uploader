@@ -15,6 +15,9 @@
       - if @next_booking
         %p Go to next booking that requires photos
         = link_to "Next Booking", booking_path(@next_booking), class: " btn"
+      - if @last_booking
+        = link_to "Previous Booking", booking_path(@previous_booking), class: " btn"
+
   .row.booking-info.hide
     .booking-info.col.s12
       .col.s6
@@ -45,5 +48,9 @@
         %p
           %b Colour:
           %span.colour
+      .col.s6
+        %p
+          %b Quotation id:
+          %span.quotation
   .missing_images_wrapper.hide
     = render 'uploads/missing_images'

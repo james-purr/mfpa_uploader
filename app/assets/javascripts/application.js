@@ -52,7 +52,7 @@ function getImageData(id){
       rtl = data["singled_pics"]["rtl"];
       loaded = data["singled_pics"]["loaded"];
       booking = data["booking"];
-      var imageTypes = [['inspection', 'Inspection Images'], ['checkin', 'Checkin Images'], ['rtl', 'Ready to load images'] ]
+      var imageTypes = [['inspection', 'Inspection Images'], ['checkin', 'Checkin Images'], ['rtl', 'Ready to load images'], ['loaded', 'Loaded Images']]
       $('.missing_images_wrapper').removeClass('hide');
       $('.search-results').addClass('hide');
       $('.booking-info').removeClass('hide');
@@ -78,7 +78,7 @@ function getImageData(id){
                   }
                 });
               }else{
-                $('.missing-images').append("<div class='col s4 image-card' data-large='"+image["picture"].image.large.url+"'data-thumb='"+image["picture"].image.thumb.url+"' data-url='"+image["picture"].image.url+"' id='"+image["picture"].id+"' ><img src='https://secure.shipfromuk.com"+image["picture"].image.url+"'/> </div>");
+                $('.missing-images').append("<div class='col s4 image-card' data-large='"+image["picture"].image.thumb.url+"'data-thumb='"+image["picture"].image.thumb.url+"' data-url='"+image["picture"].image.url+"' id='"+image["picture"].id+"' ><img src='https://secure.shipfromuk.com"+image["picture"].image.url+"'/> </div>");
               }
 
           }
@@ -93,6 +93,8 @@ function getImageData(id){
       $('span.registration').text(booking["registration"])
       $('span.dropoff').text(booking["dropoff"])
       $('span.colour').text(booking["colour"])
+      $('span.quotation').text(booking.quotation.id)
+
     },
     error: function(data){
       debugger
