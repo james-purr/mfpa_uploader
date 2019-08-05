@@ -69,6 +69,14 @@ class UploadsController < ApplicationController
     return_object['singled_pics']["checkin"] = checkin
     return_object['singled_pics']["rtl"] = rtl
     return_object['singled_pics']["loaded"] = loaded
+    ['inspection', 'rtl', 'loaded'].each do |section|
+      if !return_object['singled_pics'][section].select{|pic| pic["exists"] == false}.any?
+         booking = Booking.find_by(booking_id: id)
+         booking[stage_translator(section)] = true
+         booking.save!
+  
+      end
+    end
     return_object['booking'] = parsed["booking"]
     respond_to do |format|
       format.json { render json: return_object , status: :ok}
@@ -148,6 +156,12 @@ class UploadsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_upload
       @upload = Upload.find(params[:id])
+    end
+
+    def stage_translator (field)
+      return 'inspection_complete' if field == 'inspection'
+      return 'ready_to_load_complete' if field == 'rtl'
+      return 'loaded_complete' if field == 'loaded'
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

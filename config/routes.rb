@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   resources :uploads
   resources :bookings
   match 'booking-by-reference/:reference', to: 'bookings#reference', via: [:get]
+  match 'update-booking-status/:id/:status', to: 'bookings#update_booking_status', via: [:post]
 
   match 'search', to: 'uploads#search', via: [:post], as: :booking_search, :defaults => { :format => :json }
   match 'get-missing-images/:id', to: 'uploads#get_missing_images', via: [:get], as: :missing_images, :defaults => { :format => :json }

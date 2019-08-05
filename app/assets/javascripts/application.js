@@ -20,15 +20,21 @@
 
 $( document ).on('turbolinks:load',function(){
   $('body').on('click', '.booking-card', function(e){
-    $('.search-results').addClass('hide');
+    // $('.search-results').addClass('hide');
     $('.missing_images_wrapper').removeClass('hide');
     if($(e).hasClass('booking-card')){
       var id = $(e).attr('id');
     }else{
       var id = $(e.target).parents('.booking-card').attr('id')
     }
-    window.location.href = "booking-by-reference/" + id;
+    // window.location.href = "booking-by-reference/" + id;
+    window.open("booking-by-reference/" + id, '_blank');
   })
+
+  $('body').on('click', '.status-chage', function(e){
+      imagestatusChange(e);
+  });
+
   $('.datepicker').datepicker();
   $('#submit-form').on('click', searchForBookings);
 
@@ -72,6 +78,7 @@ function getImageData(id){
                       formData.append('large', element.large);
                       formData.append('thumb', element.thumb);
                       formData.append('original', element.url);
+                      formData.append('booking_id', $('.booking-show-wrapper').attr('id'));
                       // formData.append("data", "loremipsum");
                       console.log(formData)
                     });
@@ -83,6 +90,7 @@ function getImageData(id){
 
           }
         });
+        $('.missing-images').append("<div class='row col s12'><button class='btn status-chage' id='" +type[0]+ "'>Mark "+type[1]+" as complete</button></div>")
       });
 
 
@@ -129,4 +137,16 @@ function searchForBookings(e){
         });
       },
     });
+}
+
+function imagestatusChange(e){
+  var id = $('.booking-show-wrapper').attr('id');
+  var status = e.currentTarget.id;
+  $.ajax({
+    type: "POST",
+    url: "/update-booking-status/"+id+"/"+status+".json",
+    dataType: 'json',
+    success: function(data) {
+    },
+  });
 }
