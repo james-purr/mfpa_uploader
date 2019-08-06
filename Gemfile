@@ -32,6 +32,7 @@ gem 'dropzonejs-rails'
 gem 'carrierwave', '>= 2.0.0.rc', '< 3.0'
 gem 'net-scp'
 gem 'net-sftp'
+gem 'yaml_db'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
