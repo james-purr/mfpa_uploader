@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount Lockup::Engine, at: '/lockup'
   resources :uploads
   resources :bookings
   match 'booking-by-reference/:reference', to: 'bookings#reference', via: [:get]
