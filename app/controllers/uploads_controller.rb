@@ -10,7 +10,9 @@ class UploadsController < ApplicationController
   end
 
   def search_bookings
-
+    @booking = Booking.where(complete:false).first
+    @next_booking = Booking.where(complete:false).where('id > ?', @booking.id).first
+    @last_booking = Booking.where(complete:false).last
   end
 
   # GET /uploads/1
@@ -74,7 +76,7 @@ class UploadsController < ApplicationController
          booking = Booking.find_by(booking_id: id)
          booking[stage_translator(section)] = true
          booking.save!
-  
+
       end
     end
     return_object['booking'] = parsed["booking"]

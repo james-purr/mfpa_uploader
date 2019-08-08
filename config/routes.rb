@@ -10,6 +10,6 @@ Rails.application.routes.draw do
   match 'search-bookings', to: 'uploads#search_bookings', via: [:get], as: :search_bookings
 
 
-  root "uploads#index"
+  root "uploads#search_bookings"
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

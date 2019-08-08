@@ -10,6 +10,11 @@
   %p Loading Images
 
 %p#notice= notice
+.row
+  %h5 Go to first or last booking that requires upload
+  = link_to "Next Booking", booking_path(@booking), class: " btn"
+  = link_to "Last Booking", booking_path(@last_booking), class: " btn"
+%br
 .search-form
   %h5 Search for booking
   .row

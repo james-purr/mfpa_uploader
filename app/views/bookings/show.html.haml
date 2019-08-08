@@ -15,8 +15,10 @@
       - if @next_booking
         %p Go to next booking that requires photos
         = link_to "Next Booking", booking_path(@next_booking), class: " btn"
-      - if @last_booking
+      - if @previous_booking
         = link_to "Previous Booking", booking_path(@previous_booking), class: " btn"
+      - if @last_booking
+        = link_to "Last Booking", booking_path(@last_booking), class: " btn"
 
   .row.booking-info.hide
     .booking-info.col.s12
